@@ -8,17 +8,26 @@
     "preview": "nuxt preview",
     "postinstall": "nuxt prepare",
     "lint": "eslint .",
-    "typecheck": "nuxt typecheck"
+    "typecheck": "nuxt typecheck",
+    "db:push": "drizzle-kit push",
+    "db:reset": "bun scripts/db-reset.mjs && drizzle-kit push",
+    "db:seed": "bun scripts/db-seed.mjs"
   },
   "dependencies": {
     "@iconify-json/lucide": "^1.2.95",
     "@iconify-json/simple-icons": "^1.2.72",
     "@nuxt/ui": "^4.5.1",
+    "drizzle-orm": "^0.41.0",
+    "echarts": "^5.6.0",
     "nuxt": "^4.3.1",
-    "tailwindcss": "^4.2.1"
+    "nuxt-auth-utils": "^0.5.19",
+    "postgres": "^3.4.7",
+    "tailwindcss": "^4.2.1",
+    "vue-echarts": "^7.0.3"
   },
   "devDependencies": {
     "@nuxt/eslint": "^1.15.2",
+    "drizzle-kit": "^0.31.9",
     "eslint": "^10.0.2",
     "typescript": "^5.9.3",
     "vue-tsc": "^3.2.5"
