@@ -153,6 +153,36 @@ const deleteTask = async (id: number) => {
 const projects = computed(() => member.value?.projects ?? []);
 const tasks = computed(() => member.value?.tasks ?? []);
 
+const projectProgressMap = computed(() => {
+  const map: Record<number, { total: number; done: number; percent: number }> =
+    {};
+
+  for (const project of projects.value) {
+    const scopedTasks = tasks.value.filter(
+      (t: any) => t.projectId === project.id,
+    );
+    const total = scopedTasks.length;
+    const done = scopedTasks.filter(
+      (t: any) => t.status === "terealisasi",
+    ).length;
+    const percent = total > 0 ? Math.round((done / total) * 100) : 0;
+
+    map[project.id] = { total, done, percent };
+  }
+
+  return map;
+});
+
+const overallProgress = computed(() => {
+  const total = tasks.value.length;
+  const done = tasks.value.filter(
+    (t: any) => t.status === "terealisasi",
+  ).length;
+  const percent = total > 0 ? Math.round((done / total) * 100) : 0;
+
+  return { total, done, percent };
+});
+
 const typeLabels: Record<string, string> = {
   intern: "Magang",
   pkl: "PKL",
@@ -226,6 +256,22 @@ const typeLabels: Record<string, string> = {
       />
     </div>
 
+    <UCard class="mb-6">
+      <template #header>
+        <div class="flex items-center justify-between">
+          <h2 class="font-semibold text-gray-900 dark:text-white">
+            Progress Keseluruhan Semua Proyek
+          </h2>
+          <span class="text-sm font-semibold text-gray-700 dark:text-gray-200">
+            {{ overallProgress.done }} / {{ overallProgress.total }} ({{
+              overallProgress.percent
+            }}%)
+          </span>
+        </div>
+      </template>
+      <UProgress :model-value="overallProgress.percent" />
+    </UCard>
+
     <!-- Tabs -->
     <UTabs
       v-model="activeTab"
@@ -245,6 +291,9 @@ const typeLabels: Record<string, string> = {
         <div v-for="proj in projects" :key="proj.id">
           <ProyekCard
             :project="proj"
+            :total-tasks="projectProgressMap[proj.id]?.total ?? 0"
+            :done-tasks="projectProgressMap[proj.id]?.done ?? 0"
+            :progress-percent="projectProgressMap[proj.id]?.percent ?? 0"
             is-admin
             @edit="openEditProyek(proj)"
             @delete="deleteProject"

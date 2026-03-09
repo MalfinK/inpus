@@ -10,6 +10,9 @@ const props = defineProps<{
     endDate?: string | null;
     memberName?: string;
   };
+  totalTasks?: number;
+  doneTasks?: number;
+  progressPercent?: number;
   showMember?: boolean;
   isAdmin?: boolean;
 }>();
@@ -34,6 +37,13 @@ const roleLabels: Record<string, string> = {
   tl: "Team Leader (TL)",
   sa: "System Analyst (SA)",
 };
+
+const safeTotalTasks = computed(() => props.totalTasks ?? 0);
+const safeDoneTasks = computed(() => props.doneTasks ?? 0);
+const safeProgressPercent = computed(() => {
+  if (!safeTotalTasks.value) return 0;
+  return Math.max(0, Math.min(100, props.progressPercent ?? 0));
+});
 </script>
 
 <template>
@@ -97,6 +107,20 @@ const roleLabels: Record<string, string> = {
     >
       <UIcon name="i-lucide-calendar" class="w-3 h-3" />
       {{ project.startDate ?? "—" }} s/d {{ project.endDate ?? "Sekarang" }}
+    </div>
+
+    <div class="mt-4">
+      <div class="flex items-center justify-between text-xs mb-1.5">
+        <span class="text-gray-500 dark:text-gray-400 font-medium">
+          Progress Task
+        </span>
+        <span class="text-gray-700 dark:text-gray-200 font-semibold">
+          {{ safeDoneTasks }} / {{ safeTotalTasks }} ({{
+            safeProgressPercent
+          }}%)
+        </span>
+      </div>
+      <UProgress :model-value="safeProgressPercent" />
     </div>
   </UCard>
 </template>
