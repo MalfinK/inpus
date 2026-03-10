@@ -40,7 +40,7 @@ const onSelect = () => {
     <UCard>
       <div class="space-y-4">
         <UFormField label="Pilih Nama">
-          <USelect
+          <USelectMenu
             v-model="selectedId"
             :items="options"
             value-key="value"
